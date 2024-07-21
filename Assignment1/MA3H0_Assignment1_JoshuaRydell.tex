@@ -1,0 +1,164 @@
+\documentclass[a4paper,11pt]{article}
+
+
+\title{MA3H0 Assignment 1}
+\author{Joshua Rydell}
+\usepackage{graphicx}
+\usepackage{framed}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{cite}
+\usepackage{mathrsfs}
+\usepackage{array}
+\usepackage[numbers]{natbib}
+\bibliographystyle{plainnat}
+\usepackage{cite}
+
+\usepackage{amsthm} %  package used to make the theorem environments work.
+% code below sets up new theorem environments
+\theoremstyle{plain} % this sets the style for all new environments created using \newtheorem to have the "theorem" style, which as a bold title, italic text and vertical space above and below it. 
+\newtheorem{thm}{Theorem}[section] 
+\newtheorem{lem}[thm]{Lemma} 
+\newtheorem{prop}[thm]{Proposition} 
+\newtheorem*{cor}{Corollary} 
+\newtheorem*{claim}{Claim} 
+
+\theoremstyle{definition} % this sets the style for all new environments created using \newtheorem to have the "definition" style, which as a bold title, upright text and vertical space above and below it.
+\newtheorem{defn}{Definition}[section]
+\newtheorem{eg}{Example}[section]
+
+
+\theoremstyle{remark} % this sets the style for all new environments created using \newtheorem to have the "remark" style, which as an italic non-bold title, upright text and no extra vertical space above and below it.
+\newtheorem*{rem}{Remark} 
+\newtheorem{case}{Case}
+
+% note that there is already an in-built "proof" environment which we do not need to create
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Lc}{\mathcal{L}}
+\newcommand{\brac}[1]{\left ( #1  \right )}
+\newcommand{\abs}[1]{\left | #1  \right | }
+\begin{document}  
+\maketitle
+\begin{enumerate}
+\item We define the differential operator $\Lc(v)(x) := -\partial^2_xv(x) + q(x)v(x)$, then we can reformulate the given problem as
+\begin{equation} \label{(1)_reform}
+\begin{cases}
+\Lc(\tilde u)(x) = f(x), & x \in(0,1) \\
+\partial_x \tilde u(0) = \alpha, \\
+\tilde u(1) = \beta 
+\end{cases} 
+\end{equation} 
+
+In order to apply the 'ghost' point technique, we consider (\ref{(1)_reform}) but where the interval on which the problem is defined is slightly extended to $(-h,1)$, i.e.
+
+\begin{equation} \label{(1)_extended}
+\begin{cases}
+\Lc(\tilde u)(x) = f(x), & x \in(-h,1) \\
+\partial_x \tilde u(0) = \alpha, \\
+\tilde u(1) = \beta 
+\end{cases} 
+\end{equation} 
+
+Let $N \in \N$ and we define $h = \frac 1 N$, we then create a mesh for $(-h,1)$, denoted $\Omega_h$, where $\Omega_h = \{x_j\}$, where $x_j := jh, \; j = -1, 0, \dotsc, N$. Let $u_h \in S_h$ and define $u_i = u_h(x_i)$.
+
+We then calculate the second difference of $u_h$ at 0 to be 
+ \[D^2_x u_h(0) = \frac{ u_h(-h)-2  u_h(0)+ u_h(h)}{h^2}\] 
+\begin{equation} \label{D2_at_0}
+= \frac{1}{h^2}(u_{-1}-2  u_0+  u_1)
+\end{equation} 
+
+We then rearrange $\alpha = \partial_x \tilde u(0) \approx \frac{1}{2h}(u_1 - u_{-1})$ to get $u_{-1} \approx u_1 -2h\alpha$. Inserting this into (\ref{D2_at_0}) gives us 
+\[D^2_x u_h(0) = \frac{2}{h^2}(u_1 - u_0 - h\alpha).\]
+
+We can define the discrete operator $\Lc_h : S_h \to S_h$ given by
+\begin{equation} \label{def_of_Lh}
+\begin{cases}
+\Lc_h(u_h)_0 = -\frac{2}{h^2}(u_1-u_0) +q(x_0)u_0  \\
+\Lc_h(u_h)_i = -\frac{u_{i+1}-2u_i+u_{i-1}}{h^2} + q(x_i)u_i, & i = 1, \dotsc, N-1 \\
+\Lc_h(u_h)_N = u_N 
+\end{cases} 
+\end{equation} 
+
+Therefore we can discretise (\ref{(1)_extended}) using $\Lc_h$ by
+\begin{equation} \label{discrete_(1)_extended}
+\begin{cases}
+\Lc_h(u_h)_0 = f(x_0) - 2\alpha/h \\
+\Lc_h(u_h)_i = f(x_i), & i = 1, \dotsc, N-1 \\
+\Lc_h(u_h)_N = \beta 
+\end{cases} 
+\end{equation}
+
+\item Using (\ref{def_of_Lh}) and (\ref{discrete_(1)_extended}) we define the matrix
+\[A = 
+\begin{pmatrix}
+\frac{2}{h^2}+q(x_0) & \frac{-2}{h^2} & 0& \ldots  & 0 \\
+\frac{-1}{h^2} & \frac{2}{h^2} + q(x_1) & \frac{-1}{h^2} & \ddots & \vdots \\
+0 & \ddots & \ddots & \ddots & 0 \\ 
+\vdots & \ddots & \frac{-1}{h^2} & \frac{2}{h^2} + q(x_{N-1}) & \frac{-1}{h^2} \\
+0 & \dots & 0 & 0 & 1
+\end{pmatrix} \in \mathbb{R}^{(N+1) \times (N+1)}, 
+\]
+and the vectors
+\[U = 
+\begin{pmatrix}
+u_0 \\
+u_1 \\
+\vdots \\
+u_{N-1} \\
+u_N
+\end{pmatrix}\in \mathbb{R}^{N+1}, \;
+B = \begin{pmatrix}
+f(x_0) - \frac{2\alpha}{h} \\
+f(x_1) \\
+\vdots \\
+f(x_{N-1}) \\
+\beta
+\end{pmatrix} 
+\in \mathbb{R}^{N+1}.
+ \]
+So (\ref{def_of_Lh}) and (\ref{discrete_(1)_extended}) can be rewritten as $AU = B$
+
+\item Let $z_h := \Lc_h(v_h)$, recall that $q(x_i) \geq Q^* > 0$, then we calculate that
+\begin{equation} \label{lower_bound}
+\abs{ \brac{ \frac{2}{h^2} +Q^*}v_i } \leq \brac{\frac{2}{h^2}+ q(x_i)}|v_i|.
+\end{equation}   
+Recall for $i = 1, \dotsc, N-1$, we have
+\[z_i =  -\frac{1}{h^2} v_{i-1}+\brac{\frac{2}{h^2}+q(x_i)}v_i-\frac{1}{h^2}v_{i+1} \] 
+which implies, using the triangle rule,
+\[\brac{\frac{2}{h^2}+ q(x_i)}|v_i| \leq |z_i| + \frac{1}{h^2}|v_{i-1}| +  \frac{1}{h^2}|v_{i+1}|\]
+\begin{equation} \label{up_bound_i_eq_1_to_N}
+\leq \frac{2}{h^2}\|v_h\|_{\infty, h} + \|z_h\|_{\infty,h}.
+\end{equation}
+Similarly, for $i=0$, recall
+\[z_0 = \brac{ \frac{2}{h^2} + q(x_0)}v_0 - \frac{2}{h^2}v_1\]
+Rearranging and applying the triangle inequality again, gives
+\begin{equation} \label{up_bound_i_eq_0}
+\brac{\frac{2}{h^2}+ q(x_0)}|v_0| \leq |z_0| + \frac{2}{h^2}|v_{1}| \leq \frac{2}{h^2}\|v_h\|_{\infty, h} + \|z_h\|_{\infty,h}.
+\end{equation} 
+Applying (\ref{up_bound_i_eq_0}) and (\ref{up_bound_i_eq_1_to_N}) to (\ref{lower_bound}) gives 
+\[\brac{ \frac{2}{h^2}+Q^*}\|v_h\|_{\infty,h} \leq \frac{2}{h^2}\|v_h\|_{\infty, h} + \|z_h\|_{\infty,h}, \]
+rearranging the above shows we can take $C = 1/Q^*$ when bounding for $i = 0, \dotsc, N-1$.
+For $i = N$, we have $z_N = v_N$ so clearly 
+\[|v_N| = |z_N| \leq   \|z_h\|_{\infty,h}\]
+Therefore the inequality holds for $C = \max\{1, 1/Q^*\}$
+\item Since this method depends on the second difference, the order of consistency will be 2 when using the supremum norm. However we require our solution, $\tilde u$ to be in $C^4([-h,1])$
+\item Let $b_h = \Lc_h(u_h)$. We know by applying the proof of Theorem 1.7, that for $i = 1, \dotsc, N-1$
+\[|\Lc_h(\tilde u)_i - b_i| \leq C_ch^2| \tilde u |_{C^4([-h,1])} \]
+for some constant $C_c$. For $i=N$ we have $\Lc_h(\tilde u) = \beta$ and therefore $|\Lc(\tilde u)_N - b_N| = 0$. For $i=0$ we have
+\[|\Lc(\tilde u)_0 - b_0| =  \abs{-\frac{2}{h^2}(\tilde u(x_1)- \tilde u(x_0)) +q(x_0)\tilde u(x_0) - f(x_0) + \frac{2\alpha}{h}} \]
+\[= \abs{ -D^2_x \tilde u(0)   +q(x_0)\tilde u(x_0) - f(x_0)}\] 
+\[ = | -D^2_x \tilde u(0) \underbrace{-\partial^2_x  \tilde u(0)  +q(x_0)\tilde u(x_0) - f(x_0)}_{=0} + \partial^2_x  \tilde u(0)|\]
+\[= \abs{\partial^2_x  \tilde u(0) -D^2_x \tilde u(0) } \leq C_c h^2 | \tilde u |_{C^4([-h,1])}, \] 
+where in the last step we applied lemma 1.3 in the notes. Thus by applying question three, we have
+\[ \| \tilde u - u_h \|_{\infty,h} \leq  C_c \| \Lc_h (\tilde u - u_h)\|_{\infty,h}\]
+\[= C_c \| \Lc_h (\tilde u) - \Lc_h(u_h)\|_{\infty,h} \leq C_sC_c h^2| \tilde u |_{C^4([-h,1])} \]
+Therefore proving the order of convergence to be two two when using the supremum norm to calculate error. As $h \to 0$, $C_sC_c h^2| \tilde u |_{C^4([0,1])} \to 0$, therefore $u_h \to \tilde u$ as $h \to 0$ in the discrete supremum norm and $u_h$ converges to $\tilde u$.
+
+\item Using this new scheme would mean that the approximation around $x_0$ would not be done using the second difference. It uses a forward difference scheme, which means the new order of convergence for this scheme would be one. However, we would only need the solution to be in $C^3([0,1])$ for this new scheme to work.
+\end{enumerate}
+
+\end{document}
+
